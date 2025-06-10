@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JS</title>
+  <script>
+    window.onload = inicio;
+    let cont = 1;
+
+    function inicio() {
+      let botao = document.getElementById('btnAdiciona');
+      botao.addEventListener('click', adiciona);
+    }
+
+    function adiciona() {
+      let campoNome = document.getElementById('nome');
+      let nomeAtividade = campoNome.value;
+
+      let encerradas = document.getElementById('encerradas');
+
+      let linha = document.createElement('tr');
+
+      let colunaNome = document.createElement('td');
+      colunaNome.textContent = nomeAtividade;
+
+      let colunaData = document.createElement('td');
+      colunaData.id = 'data' + cont;
+
+      let colunaSituacao = document.createElement('td');
+      let selectSituacao = document.createElement('select');
+      selectSituacao.id = 'select' + cont;
+
+      // Evento ao mudar a situação
+      selectSituacao.addEventListener('change', function () {
+        alterarSituacao(this, colunaNome, colunaData);
+      });
+
+      // Lista de opções
+      let opcoesSituacao = [
+        { valor: 'inicio', texto: 'Aguardando' },
+        { valor: 'atribuida', texto: 'Atribuida' },
+        { valor: 'parada', texto: 'Pausada' },
+        { valor: 'rejeitada', texto: 'Rejeitada' },
+        { valor: 'fim', texto: 'Concluída' }
+      ];
+
+      for (let opcao of opcoesSituacao) {
+        let elementoOpcao = document.createElement('option');
+        elementoOpcao.value = opcao.valor;
+        elementoOpcao.textContent = opcao.texto;
+        selectSituacao.appendChild(elementoOpcao);
+      }
+
+      colunaSituacao.appendChild(selectSituacao);
+
+      linha.appendChild(colunaNome);
+      linha.appendChild(colunaData);
+      linha.appendChild(colunaSituacao);
+      encerradas.appendChild(linha);
+
+      cont++;
+    }
+
+    function alterarSituacao(select, colunaNome, colunaData) {
+      let valorSelecionado = select.value;
+
+      // Cor de fundo baseada no status
+      if (valorSelecionado === 'atribuida') {
+        colunaNome.style.backgroundColor = 'lightgreen';
+      } else if (valorSelecionado === 'parada') {
+        colunaNome.style.backgroundColor = 'yellow';
+      } else if (valorSelecionado === 'rejeitada') {
+        colunaNome.style.backgroundColor = 'red';
+      } else {
+        colunaNome.style.backgroundColor = '';
+      }
+
+      // Preenche data de conclusão se for concluída
+      if (valorSelecionado === 'fim' && colunaData.textContent === '') {
+        let agora = new Date();
+        let dia = agora.getDate();
+        let mes = agora.getMonth() + 1;
+        let ano = agora.getFullYear();
+        let hora = agora.getHours();
+        let minutos = agora.getMinutes().toString().padStart(2, '0');
+
+        colunaData.textContent = `${dia}/${mes}/${ano} ${hora}:${minutos}`;
+      }
+    }
+  </script>
+</head>
+<body>
+  <label for="nome">Atividade:</label>
+  <input type="text" id="nome" />
+  <input type="button" id="btnAdiciona" value="Adicionar" /><br /><br />
+
+  <table border="1">
+    <tr>
+      <th>Atividade</th>
+      <th>Data de Conclusão</th>
+      <th>Situação</th>
+    </tr>
+    <tbody id="encerradas"></tbody>
+  </table>
+</body>
+</html>
